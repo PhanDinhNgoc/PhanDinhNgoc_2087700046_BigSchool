@@ -1,4 +1,5 @@
-﻿using PhanDinhNgoc_2087700046.Models;
+﻿using Microsoft.AspNet.Identity;
+using PhanDinhNgoc_2087700046.Models;
 using PhanDinhNgoc_2087700046.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,13 @@ namespace PhanDinhNgoc_2087700046.Controllers
     public class CoursesController : Controller
     {
         // GET: Courses
-        private readonly ApplicationDbContext _dbContext;
+                private readonly ApplicationDbContext _dbContext;
 
         public CoursesController()
         {
             _dbContext = new ApplicationDbContext();
         }
+        [Authorize]
         public ActionResult Create()
         {
             var viewModel = new CourseViewModel
@@ -24,6 +26,27 @@ namespace PhanDinhNgoc_2087700046.Controllers
                 Categories = _dbContext.Categories.ToList()
             };
             return View(viewModel);
+        }
+        [Authorize]
+        [HttpPost]
+        public ActionResult Create(CourseViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                viewModel.Categories = _dbContext.Categories.ToList();
+                return View("Create", viewModel);
+            }
+            var course = new Course
+            {
+                LecturerId = User.Identity.GetUserId(),
+                DateTime = viewModel.GetDateTime(),
+                CategoryId = viewModel.Category,
+                Place = viewModel.Place
+            };
+            _dbContext.Courses.Add(course);
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

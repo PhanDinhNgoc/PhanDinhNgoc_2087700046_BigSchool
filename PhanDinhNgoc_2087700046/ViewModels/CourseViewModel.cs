@@ -1,6 +1,7 @@
 ﻿using PhanDinhNgoc_2087700046.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -8,7 +9,10 @@ namespace PhanDinhNgoc_2087700046.ViewModels
 {
     public class CourseViewModel
     {
+        [Required]
         public string Place { get; set; }
+        [Required]
+        [FutureDate]
         public string Date { get; set; }
         public string Time { get; set; }
 
@@ -20,5 +24,6 @@ namespace PhanDinhNgoc_2087700046.ViewModels
         {
             return DateTime.Parse(string.Format("{0} {1}", Date, Time));
         }
+       
     }
 }
